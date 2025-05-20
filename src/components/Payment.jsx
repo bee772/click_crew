@@ -5,42 +5,58 @@ import "bootstrap/dist/js/bootstrap.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Payments = () => {
-  const { product } = useLocation().state || {};
+  const location = useLocation();
+  const { product, cartItems, totalCost, isCartCheckout } =
+    location.state || {};
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
-  const img_url = "https://Mwangi10.pythonanywhere.com/static/images/";
+  const defaultImage = "https://Mwangi10.pythonanywhere.com/static/images/";
 
-  // Redirect if product doesn't exist
-  if (!product) {
-    navigate("/"); // or wherever products are listed
+  // Redirect if no payment data exists
+  if (!product && !cartItems) {
+    navigate("/");
     return null;
   }
 
   const submit = async (e) => {
     e.preventDefault();
     setMessage("Please wait as we process your payment");
+    setIsProcessing(true);
 
     try {
       const data = new FormData();
       data.append("phone", phone);
-      data.append("amount", product.product_cost);
+      data.append("amount", isCartCheckout ? totalCost : product.product_cost);
 
       const response = await axios.post(
         "https://Mwangi10.pythonanywhere.com/api/mpesa_payment",
         data
       );
-      setMessage(response.data.message);
+
+      setMessage(response.data.message || "Payment initiated successfully");
+
+      // Clear cart if payment was successful and coming from cart
+      if (isCartCheckout && response.data.success) {
+        localStorage.removeItem("cart");
+        window.dispatchEvent(new Event("cartUpdated"));
+      }
     } catch (error) {
-      setMessage("Payment failed. Please try again.");
+      setMessage(
+        error.response?.data?.message || "Payment failed. Please try again."
+      );
       console.error("Payment error:", error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  // Construct the full image URL
-  const productImageUrl = product.product_photo.startsWith("http")
-    ? product.product_photo
-    : img_url + product.product_photo;
+  const getImageUrl = (item) => {
+    if (item.product_image) return item.product_image;
+    if (item.product_photo?.startsWith("http")) return item.product_photo;
+    return defaultImage + (item.product_photo || "");
+  };
 
   return (
     <div className="container py-5">
@@ -52,7 +68,9 @@ const Payments = () => {
             {message && (
               <div
                 className={`alert ${
-                  message.includes("failed") ? "alert-danger" : "alert-info"
+                  message.toLowerCase().includes("fail")
+                    ? "alert-danger"
+                    : "alert-info"
                 }`}
               >
                 {message}
@@ -60,26 +78,71 @@ const Payments = () => {
             )}
 
             <div className="row align-items-center">
-              {/* Left Side: Product Image */}
+              {/* Left Side: Product/Cart Summary */}
               <div className="col-md-6 text-center mb-4 mb-md-0">
-                <img
-                  src={productImageUrl}
-                  alt={product.product_name}
-                  className="img-fluid rounded"
-                  style={{
-                    maxHeight: "300px",
-                    width: "auto",
-                    objectFit: "contain",
-                  }}
-                  onError={(e) => {
-                    e.target.src =
-                      "https://Mwangi10.pythonanywhere.com/static/images/";
-                  }}
-                />
-                <h5 className="mt-3">{product.product_name}</h5>
-                <h4 className="text-primary">
-                  KSH {parseFloat(product.product_cost).toFixed(2)}
-                </h4>
+                {isCartCheckout ? (
+                  <>
+                    <h4>Cart Summary</h4>
+                    <p>
+                      {cartItems.length}{" "}
+                      {cartItems.length === 1 ? "item" : "items"} in cart
+                    </p>
+                    <div
+                      className="cart-items-container"
+                      style={{ maxHeight: "300px", overflowY: "auto" }}
+                    >
+                      {cartItems.map((item, index) => (
+                        <div
+                          key={index}
+                          className="mb-3 d-flex align-items-center"
+                        >
+                          <img
+                            src={getImageUrl(item)}
+                            alt={item.product_name}
+                            className="img-thumbnail me-2"
+                            style={{
+                              width: "60px",
+                              height: "60px",
+                              objectFit: "cover",
+                            }}
+                            onError={(e) => {
+                              e.target.src = defaultImage;
+                            }}
+                          />
+                          <div className="text-start">
+                            <div className="fw-bold">{item.product_name}</div>
+                            <div>
+                              KSH {parseFloat(item.product_cost).toFixed(2)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <h4 className="text-primary mt-3">
+                      Total: KSH {parseFloat(totalCost).toFixed(2)}
+                    </h4>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={getImageUrl(product)}
+                      alt={product.product_name}
+                      className="img-fluid rounded mb-3"
+                      style={{
+                        maxHeight: "200px",
+                        width: "auto",
+                        objectFit: "contain",
+                      }}
+                      onError={(e) => {
+                        e.target.src = defaultImage;
+                      }}
+                    />
+                    <h5 className="mt-2">{product.product_name}</h5>
+                    <h4 className="text-success">
+                      KSH {parseFloat(product.product_cost).toFixed(2)}
+                    </h4>
+                  </>
+                )}
               </div>
 
               {/* Right Side: Input and Button */}
@@ -97,16 +160,16 @@ const Payments = () => {
                     title="Phone number must start with 254 followed by 9 digits"
                   />
                   <p className="text-muted mt-2 small">
-                    Enter Phone Number to pay from (starts with 254*********)
+                    Enter Phone Number to pay from (format: 254XXXXXXXXX)
                   </p>
                 </div>
 
                 <button
                   type="submit"
-                  className="btn btn-outline-success btn-lg w-100 py-3"
-                  disabled={message.includes("Please wait")}
+                  className="btn btn-success btn-lg w-100 py-3"
+                  disabled={isProcessing}
                 >
-                  {message.includes("Please wait") ? (
+                  {isProcessing ? (
                     <>
                       <span
                         className="spinner-border spinner-border-sm me-2"

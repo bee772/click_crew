@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [totalCost, setTotalCost] = useState(0);
+  const [selectedItem, setSelectedItem] = useState(null);
   const img_url = "https://Mwangi10.pythonanywhere.com/static/images/";
   const navigate = useNavigate();
 
@@ -12,17 +12,10 @@ const Cart = () => {
     setCartItems(storedCart);
   }, []);
 
-  useEffect(() => {
-    const total = cartItems.reduce(
-      (sum, item) => sum + Number(item.product_cost),
-      0
-    );
-    setTotalCost(total);
-  }, [cartItems]);
-
   const clearCart = () => {
     localStorage.removeItem("cart");
     setCartItems([]);
+    setSelectedItem(null);
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
@@ -30,15 +23,27 @@ const Cart = () => {
     const updatedCart = cartItems.filter((_, index) => index !== indexToRemove);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     setCartItems(updatedCart);
+    // Reset selection if the selected item was removed
+    if (selectedItem === indexToRemove) {
+      setSelectedItem(null);
+    } else if (selectedItem > indexToRemove) {
+      // Adjust selection index if items before it were removed
+      setSelectedItem(selectedItem - 1);
+    }
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
-  const proceedToCheckout = () => {
+  const proceedToPayment = () => {
+    if (selectedItem === null) return;
+
+    const item = cartItems[selectedItem];
     navigate("/Payment", {
       state: {
-        cartItems,
-        totalCost,
-        isCartCheckout: true, // Flag to indicate this is coming from cart
+        product: {
+          ...item,
+          product_image: img_url + item.product_photo,
+        },
+        isCartCheckout: false, // This is now a single product payment
       },
     });
   };
@@ -46,11 +51,6 @@ const Cart = () => {
   return (
     <div className="container mt-5">
       <h3 className="text-center text-primary">Your Shopping Cart</h3>
-      {cartItems.length > 0 && (
-        <h5 className="text-center text-success">
-          Total: <span className="fw-bold">{totalCost.toFixed(2)} KES</span>
-        </h5>
-      )}
 
       {cartItems.length === 0 ? (
         <p className="text-center text-muted">Your cart is empty.</p>
@@ -60,15 +60,25 @@ const Cart = () => {
             <button className="btn btn-danger me-3" onClick={clearCart}>
               Clear Cart
             </button>
-            <button className="btn btn-success" onClick={proceedToCheckout}>
-              Proceed to Checkout
+            <button
+              className="btn btn-success"
+              onClick={proceedToPayment}
+              disabled={selectedItem === null}
+            >
+              Pay for Selected Item
             </button>
           </div>
 
           <div className="row g-4">
             {cartItems.map((item, index) => (
               <div key={index} className="col-md-4">
-                <div className="card h-100 shadow-sm">
+                <div
+                  className={`card h-100 shadow-sm ${
+                    selectedItem === index ? "border-primary border-2" : ""
+                  }`}
+                  onClick={() => setSelectedItem(index)}
+                  style={{ cursor: "pointer" }}
+                >
                   <img
                     src={img_url + item.product_photo}
                     alt={item.product_name}
@@ -80,12 +90,22 @@ const Cart = () => {
                     <p className="text-warning fw-bold">
                       {item.product_cost} KES
                     </p>
-                    <button
-                      className="btn btn-outline-danger mt-2"
-                      onClick={() => removeItem(index)}
-                    >
-                      Remove
-                    </button>
+                    <div className="d-flex justify-content-between">
+                      <button
+                        className="btn btn-outline-danger"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeItem(index);
+                        }}
+                      >
+                        Remove
+                      </button>
+                      {selectedItem === index && (
+                        <span className="text-success align-self-center">
+                          <i className="bi bi-check-circle-fill"></i> Selected
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

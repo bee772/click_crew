@@ -86,7 +86,7 @@ const Upload = () => {
             }}
           />{" "}
           <br />
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn btn-outline-success">
             Add Product
           </button>
         </form>

@@ -6,7 +6,7 @@ import "bootstrap/dist/js/bootstrap.js";
 import "../App.css";
 import { Button, Card } from "react-bootstrap";
 
-const Products = ({ addToCart }) => {
+const Products = ({ addToCart: propAddToCart }) => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +59,16 @@ const Products = ({ addToCart }) => {
   const filteredProducts = products.filter((product) =>
     product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+const addToCart = (product) => {
+  const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+  existingCart.push(product);
+  localStorage.setItem("cart", JSON.stringify(existingCart));
 
+  // 🔔 Notify other components that cart was updated
+  window.dispatchEvent(new Event("cartUpdated"));
+
+  alert(`Added "${product.product_name}" to cart.`);
+};
   if (isLoading) {
     return (
       <div className="container text-center mt-5">
@@ -124,24 +133,23 @@ const Products = ({ addToCart }) => {
                     {product.product_description}
                   </Card.Text>
                   <div className="mt-auto">
-                    <h5 className="text-primary mb-3">
+                    <h5 className="text-success mb-3">
                       KSH {parseFloat(product.product_cost).toFixed(2)}
                     </h5>
                     <div className="d-grid gap-2">
-                      <Button
-                        variant="outline-dark"
+                      <button
+                        className="btn btn-outline-dark mt-2 w-100 fw-semibold"
                         onClick={() => handleAddToCart(product)}
-                        className="mb-2"
                       >
-                        Add to Cart 🛒
-                      </Button>
+                        <i className="bi bi-cart-plus me-2"></i>Add to Cart
+                      </button>
                       <Button
                         variant="outline-success"
                         onClick={() =>
                           navigate("/Payment", { state: { product } })
                         }
                       >
-                        Buy Now 💰
+                        Buy Now 
                       </Button>
                     </div>
                   </div>
