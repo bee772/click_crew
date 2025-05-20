@@ -1,177 +1,100 @@
-import React from "react";
-import { Button, ListGroup, Badge, Alert, Image } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 
-const Cart = ({ cartItems, removeFromCart }) => {
-  const navigate = useNavigate();
+const Cart = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const [totalCost, setTotalCost] = useState(0);
   const img_url = "https://Mwangi10.pythonanywhere.com/static/images/";
+  const navigate = useNavigate();
 
-  // Debug what the component receives
-  console.log("Cart component received:", { cartItems, removeFromCart });
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(storedCart);
+  }, []);
 
-  const calculateTotal = () => {
-    if (!Array.isArray(cartItems)) return "0.00";
+  useEffect(() => {
+    const total = cartItems.reduce(
+      (sum, item) => sum + Number(item.product_cost),
+      0
+    );
+    setTotalCost(total);
+  }, [cartItems]);
 
-    return cartItems
-      .reduce((total, item) => {
-        const cost = parseFloat(item?.product_cost || 0);
-        if (isNaN(cost)) {
-          console.error("Invalid product cost:", item?.product_cost);
-          return total;
-        }
-        return total + cost;
-      }, 0)
-      .toFixed(2);
+  const clearCart = () => {
+    localStorage.removeItem("cart");
+    setCartItems([]);
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
-  const handleCheckout = () => {
-    if (!cartItems || cartItems.length === 0) {
-      alert("Your cart is empty!");
-      return;
-    }
+  const removeItem = (indexToRemove) => {
+    const updatedCart = cartItems.filter((_, index) => index !== indexToRemove);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    setCartItems(updatedCart);
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
 
-    const validItems = cartItems.filter(
-      (item) =>
-        item?.product_id &&
-        item?.product_name &&
-        !isNaN(parseFloat(item?.product_cost))
-    );
-
-    if (validItems.length !== cartItems.length) {
-      alert(
-        "Some items in your cart are invalid. Please remove them before checkout."
-      );
-      return;
-    }
-
+  const proceedToCheckout = () => {
     navigate("/Payment", {
       state: {
-        cartItems: validItems,
-        total: calculateTotal(),
+        cartItems,
+        totalCost,
+        isCartCheckout: true, // Flag to indicate this is coming from cart
       },
     });
   };
 
-  const handleRemoveItem = (productId) => {
-    if (typeof removeFromCart !== "function") {
-      console.error("removeFromCart is not a function");
-      return;
-    }
-    removeFromCart(productId);
-  };
-
-  if (!cartItems) {
-    return (
-      <div className="container mt-4">
-        <Alert variant="info">Loading cart...</Alert>
-      </div>
-    );
-  }
-
-  if (!Array.isArray(cartItems)) {
-    return (
-      <div className="container mt-4">
-        <Alert variant="danger">Invalid cart data</Alert>
-      </div>
-    );
-  }
-
-  if (cartItems.length === 0) {
-    return (
-      <div className="container mt-4">
-        <Alert variant="warning">
-          Your cart is empty!{" "}
-          <Button variant="link" onClick={() => navigate("/Getproducts")}>
-            Browse products
-          </Button>
-        </Alert>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Your Shopping Cart</h2>
+    <div className="container mt-5">
+      <h3 className="text-center text-primary">Your Shopping Cart</h3>
+      {cartItems.length > 0 && (
+        <h5 className="text-center text-success">
+          Total: <span className="fw-bold">{totalCost.toFixed(2)} KES</span>
+        </h5>
+      )}
 
-      <ListGroup className="mb-4">
-        {cartItems.map((item, index) => (
-          <ListGroup.Item
-            key={`${item.product_id}_${index}`}
-            className="d-flex justify-content-between align-items-center p-3"
-          >
-            <div className="d-flex align-items-center" style={{ width: "75%" }}>
-              <Image
-                src={img_url + (item.product_photo || "default.jpg")}
-                alt={item.product_name}
-                thumbnail
-                style={{
-                  width: "120px",
-                  height: "120px",
-                  objectFit: "cover",
-                  marginRight: "20px",
-                }}
-                onError={(e) => {
-                  e.target.src = img_url + "default.jpg";
-                }}
-              />
-              <div>
-                <h5>{item.product_name || "Unnamed Product"}</h5>
-                <p className="text-muted">
-                  {item.product_description || "No description"}
-                </p>
-                <h6 className="text-primary">
-                  KSH {parseFloat(item.product_cost || 0).toFixed(2)}
-                </h6>
+      {cartItems.length === 0 ? (
+        <p className="text-center text-muted">Your cart is empty.</p>
+      ) : (
+        <>
+          <div className="text-center mb-4">
+            <button className="btn btn-danger me-3" onClick={clearCart}>
+              Clear Cart
+            </button>
+            <button className="btn btn-success" onClick={proceedToCheckout}>
+              Proceed to Checkout
+            </button>
+          </div>
+
+          <div className="row g-4">
+            {cartItems.map((item, index) => (
+              <div key={index} className="col-md-4">
+                <div className="card h-100 shadow-sm">
+                  <img
+                    src={img_url + item.product_photo}
+                    alt={item.product_name}
+                    className="card-img-top"
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
+                  <div className="card-body text-center">
+                    <h5 className="card-title">{item.product_name}</h5>
+                    <p className="text-warning fw-bold">
+                      {item.product_cost} KES
+                    </p>
+                    <button
+                      className="btn btn-outline-danger mt-2"
+                      onClick={() => removeItem(index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <Button
-              variant="outline-danger"
-              onClick={() => handleRemoveItem(item.product_id)}
-              size="sm"
-            >
-              Remove
-            </Button>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-
-      <div className="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
-        <h4 className="mb-0">Total:</h4>
-        <Badge bg="primary" pill style={{ fontSize: "1.25rem" }}>
-          Ksh {calculateTotal()}
-        </Badge>
-      </div>
-
-      <div className="d-grid gap-2">
-        <Button variant="success" size="lg" onClick={handleCheckout}>
-          Proceed to Checkout 💳
-        </Button>
-        <Button variant="outline-primary" onClick={() => navigate("/Products")}>
-          Continue Shopping
-        </Button>
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
-};
-
-Cart.propTypes = {
-  cartItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      product_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-      product_name: PropTypes.string,
-      product_description: PropTypes.string,
-      product_cost: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      product_photo: PropTypes.string,
-    })
-  ),
-  removeFromCart: PropTypes.func.isRequired,
-};
-
-Cart.defaultProps = {
-  cartItems: [],
 };
 
 export default Cart;
