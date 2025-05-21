@@ -1,5 +1,4 @@
 import "./App.css";
-import click from "../src/assets/images/click.png";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
