@@ -1,40 +1,41 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./Signin.css"; // You'll need to update this CSS file
 
-const Signup = () => {
-  const [username, setUsername] = useState("");
+const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
-    setLoading("Please wait as we upload your details");
+    setLoading("Please wait...");
+
     try {
       const data = new FormData();
-      data.append("username", username);
       data.append("email", email);
       data.append("password", password);
-      data.append("phone", phone);
 
       const response = await axios.post(
-        "https://mwangi10.pythonanywhere.com/api/signup",
+        "https://mwangi10.pythonanywhere.com/api/signin",
         data
       );
       setLoading("");
-      setSuccess(response.data.Success);
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setPhone("");
-    } catch (error) {
-      setSuccess("");
+
+      if (response.data.user) {
+        setSuccess(response.data.Message);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        navigate("/");
+      } else {
+        setError("Login Failed");
+      }
+    } catch (err) {
       setLoading("");
-      setError("Oops something went wrong!!");
+      setError("Something went wrong!!");
     }
   };
 
@@ -42,31 +43,8 @@ const Signup = () => {
     <div className="card">
       <div className="card2">
         <form className="form" onSubmit={submit}>
-          <p id="heading">Sign Up</p>
+          <p id="heading">Login</p>
 
-          {/* Username Field */}
-          <div className="field">
-            <svg
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              height="16"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-              className="input-icon"
-            >
-              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"></path>
-            </svg>
-            <input
-              type="text"
-              className="input-field"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Email Field */}
           <div className="field">
             <svg
               viewBox="0 0 16 16"
@@ -88,7 +66,6 @@ const Signup = () => {
             />
           </div>
 
-          {/* Password Field */}
           <div className="field">
             <svg
               viewBox="0 0 16 16"
@@ -110,39 +87,16 @@ const Signup = () => {
             />
           </div>
 
-          {/* Phone Field */}
-          <div className="field">
-            <svg
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              height="16"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-              className="input-icon"
-            >
-              <path d="M3 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V2zm6 11a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"></path>
-            </svg>
-            <input
-              type="tel"
-              className="input-field"
-              placeholder="Phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </div>
-
           <div className="btn">
             <button className="button1" type="submit">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sign
-              Up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Login&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </button>
-            <Link to="/Signin" className="button2">
-              Sign In
+            <Link to="/Signup" className="button2">
+              Sign Up
             </Link>
           </div>
 
-          <div className="messages">
+        <div className="messages">
             {loading && <p className="loading">{loading}</p>}
             {success && <p className="success">{success}</p>}
             {error && <p className="error">{error}</p>}
@@ -153,4 +107,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Signin;

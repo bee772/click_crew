@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Signup from "./components/Signup";
-import Signin from "./components/Signin";
+import Signin from "./components/Signin/Signin";
 import "bootstrap/dist/css/bootstrap.css";
 import Home from "./components/Home";
 import Products from "./components/Products";
@@ -10,6 +10,7 @@ import Cart from "./components/Cart";
 import Upload from "./components/Upload";
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
+import Logout from "./components/Logout";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -47,6 +48,7 @@ function App() {
           <Route path="/payment" Component={Payment}></Route>
           <Route path="/cart" Component={Cart}></Route>
           <Route path="/Upload" Component={Upload}></Route>
+          <Route path="/logout" Component={Logout}></Route>
         </Routes>
       </div>
     </Router>

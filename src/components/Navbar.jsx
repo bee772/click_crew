@@ -5,8 +5,13 @@ import click from "../assets/images/click.png";
 const Navbar = ({ cartCount }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
       if (window.innerWidth >= 768) {
@@ -66,36 +71,52 @@ const Navbar = ({ cartCount }) => {
                 Buy
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                to="/Upload"
-                className="nav-link"
-                onClick={() => isMobile && setIsOpen(false)}
-              >
-                Upload Product
-              </Link>
-            </li>
+            {isAuthenticated && (
+              <li className="nav-item">
+                <Link
+                  to="/Upload"
+                  className="nav-link"
+                  onClick={() => isMobile && setIsOpen(false)}
+                >
+                  Upload Product
+                </Link>
+              </li>
+            )}
           </ul>
 
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link
-                to="/Signup"
-                className="nav-link"
-                onClick={() => isMobile && setIsOpen(false)}
-              >
-                Signup
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                to="/Signin"
-                className="nav-link"
-                onClick={() => isMobile && setIsOpen(false)}
-              >
-                Signin
-              </Link>
-            </li>
+            {!isAuthenticated ? (
+              <>
+                <li className="nav-item">
+                  <Link
+                    to="/Signup"
+                    className="nav-link"
+                    onClick={() => isMobile && setIsOpen(false)}
+                  >
+                    Signup
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    to="/Signin"
+                    className="nav-link"
+                    onClick={() => isMobile && setIsOpen(false)}
+                  >
+                    Signin
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item">
+                <Link
+                  to="/logout"
+                  className="nav-link"
+                  onClick={() => isMobile && setIsOpen(false)}
+                >
+                  Logout
+                </Link>
+              </li>
+            )}
             <li className="nav-item position-relative">
               <Link
                 to="/cart"
