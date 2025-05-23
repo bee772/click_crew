@@ -114,13 +114,14 @@ const Home = () => {
           </div>
           <div className="carousel-inner rounded-3 shadow-lg">
             <div className="carousel-item active">
-              <img
-                src={delivery}
-                className="d-block w-100"
-                alt="Fast Delivery"
-                style={{ height: "500px", objectFit: "cover" }}
-              />
-              <div className="carousel-caption d-none d-md-block">
+              <div className="carousel-image-container">
+                <img
+                  src={delivery}
+                  className="d-block w-100"
+                  alt="Fast Delivery"
+                />
+              </div>
+              <div className="carousel-caption">
                 <h3 className="bg-success p-2 rounded">Fast Delivery</h3>
                 <p className="text-white bg-dark bg-opacity-75 p-1 rounded">
                   Get Delivered In No Time
@@ -128,13 +129,14 @@ const Home = () => {
               </div>
             </div>
             <div className="carousel-item">
-              <img
-                src={mobile}
-                className="d-block w-100"
-                alt="Mobile Phones"
-                style={{ height: "500px", objectFit: "cover" }}
-              />
-              <div className="carousel-caption d-none d-md-block">
+              <div className="carousel-image-container">
+                <img
+                  src={mobile}
+                  className="d-block w-100"
+                  alt="Mobile Phones"
+                />
+              </div>
+              <div className="carousel-caption">
                 <h3 className="bg-success p-2 rounded">Summer Sale</h3>
                 <p className="text-white bg-dark bg-opacity-75 p-1 rounded">
                   Up to 50% off on selected items
