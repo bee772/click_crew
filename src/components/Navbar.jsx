@@ -5,12 +5,25 @@ import click from "../assets/images/click.png";
 const Navbar = ({ cartCount }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
+    const loadUserFromStorage = () => {
+      const storedUser = localStorage.getItem("user");
+      try {
+        const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        setUser(parsedUser);
+      } catch (err) {
+        console.error("Invalid user data in localStorage");
+        setUser(null);
+      }
+    };
+
+    loadUserFromStorage();
+
+    const handleStorageChange = () => {
+      loadUserFromStorage();
+    };
 
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -19,12 +32,24 @@ const Navbar = ({ cartCount }) => {
       }
     };
 
+    window.addEventListener("storage", handleStorageChange);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token"); // optional
+    setUser(null);
+    if (isMobile) setIsOpen(false);
   };
 
   return (
@@ -71,7 +96,9 @@ const Navbar = ({ cartCount }) => {
                 Buy
               </Link>
             </li>
-            {isAuthenticated && (
+
+            {/* ✅ Upload is shown only when user is logged in */}
+            {user && (
               <li className="nav-item">
                 <Link
                   to="/Upload"
@@ -85,7 +112,7 @@ const Navbar = ({ cartCount }) => {
           </ul>
 
           <ul className="navbar-nav">
-            {!isAuthenticated ? (
+            {!user ? (
               <>
                 <li className="nav-item">
                   <Link
@@ -107,15 +134,21 @@ const Navbar = ({ cartCount }) => {
                 </li>
               </>
             ) : (
-              <li className="nav-item">
-                <Link
-                  to="/logout"
-                  className="nav-link"
-                  onClick={() => isMobile && setIsOpen(false)}
-                >
-                  Logout
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <span className="nav-link text-light">
+                    Welcome, {user[1] || "User"}
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className="nav-link btn btn-link text-light"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
             )}
             <li className="nav-item position-relative">
               <Link

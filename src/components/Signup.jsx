@@ -22,7 +22,7 @@ const Signup = () => {
       data.append("phone", phone);
 
       const response = await axios.post(
-        "https://mwangi10.pythonanywhere.com/api/signup",
+        "https://Mwangi10.pythonanywhere.com/api/signup",
         data
       );
       setLoading("");

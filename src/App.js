@@ -10,7 +10,6 @@ import Cart from "./components/Cart";
 import Upload from "./components/Upload";
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
-import Logout from "./components/Logout";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -48,7 +47,7 @@ function App() {
           <Route path="/payment" Component={Payment}></Route>
           <Route path="/cart" Component={Cart}></Route>
           <Route path="/Upload" Component={Upload}></Route>
-          <Route path="/logout" Component={Logout}></Route>
+          
         </Routes>
       </div>
     </Router>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import "./Signin.css"; // You'll need to update this CSS file
+import "./Signin.css";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -9,11 +9,12 @@ const Signin = () => {
   const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     setLoading("Please wait...");
+    setError("");
+    setSuccess("");
 
     try {
       const data = new FormData();
@@ -21,21 +22,29 @@ const Signin = () => {
       data.append("password", password);
 
       const response = await axios.post(
-        "https://mwangi10.pythonanywhere.com/api/signin",
+        "https://Mwangi10.pythonanywhere.com/api/signin",
         data
       );
+
       setLoading("");
 
       if (response.data.user) {
         setSuccess(response.data.Message);
+
+        // Save user and token
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        navigate("/");
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+
+        // ✅ Reload the app to reflect login in Navbar
+        window.location.href = "/";
       } else {
-        setError("Login Failed");
+        setError(response.data.Message || "Login Failed");
       }
     } catch (err) {
       setLoading("");
-      setError("Something went wrong!!");
+      setError(err.response?.data?.Message || "Something went wrong!!");
     }
   };
 
@@ -88,15 +97,15 @@ const Signin = () => {
           </div>
 
           <div className="btn">
-            <button className="button1" type="submit">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Login&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button className="button1" type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
             <Link to="/Signup" className="button2">
               Sign Up
             </Link>
           </div>
 
-        <div className="messages">
+          <div className="messages">
             {loading && <p className="loading">{loading}</p>}
             {success && <p className="success">{success}</p>}
             {error && <p className="error">{error}</p>}
