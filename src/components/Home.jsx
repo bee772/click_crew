@@ -4,9 +4,9 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import sonyImage from "../assets/images/sony.jpg";
 import watch from "../assets/images/watch.jpg";
 import earbuds from "../assets/images/earbuds.jpg";
-import delivery from "../assets/images/deli.avif";
-import mobile from "../assets/images/mob.webp";
-import hood from "../assets/images/hood.jpg";
+import delivery from "../assets/images/delivery.jpg";
+import man from "../assets/images/output.jpg";
+import hood from "../assets/images/output (1).jpg";
 import service from "../assets/images/service.jpg";
 import about from "../assets/images/about.jpg";
 import fb from "../assets/images/fb.jpeg";
@@ -78,126 +78,95 @@ const Home = () => {
       </header>
 
       <section className="carousel-section mb-5">
-        <div
-          id="productCarousel"
-          className="carousel slide"
-          data-bs-ride="carousel"
-          ref={productCarouselRef}
+  <div
+    id="productCarousel"
+    className="carousel slide"
+    data-bs-ride="carousel"
+    ref={productCarouselRef}
+  >
+    {/* Indicators */}
+    <div className="carousel-indicators">
+      {[0, 1, 2, 3].map((index) => (
+        <button
+          key={index}
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide-to={index}
+          className={index === 0 ? "active" : ""}
+          aria-label={`Slide ${index + 1}`}
+        />
+      ))}
+    </div>
+
+    {/* Carousel Items */}
+    <div className="carousel-inner">
+      {[
+        { 
+          img: delivery, 
+          title: "Fast Delivery", 
+          text: "Get Delivered In No Time",
+          alt: "Fast delivery service"
+        },
+        { 
+          img: man, 
+          title: "Summer Sale", 
+          text: "Up to 50% off on selected items",
+          alt: "Mobile phones on sale"
+        },
+        { 
+          img: hood, 
+          title: "New Arrivals", 
+          text: "Be the first to get the hottest products",
+          alt: "New fashion arrivals"
+        },
+        { 
+          img: service, 
+          title: "Customer Service", 
+          text: "Top-rated products loved by our community",
+          alt: "Excellent customer service"
+        }
+      ].map((item, index) => (
+        <div 
+          key={index}
+          className={`carousel-item ${index === 0 ? "active" : ""}`}
         >
-          <div className="carousel-indicators">
-            <button
-              type="button"
-              data-bs-target="#productCarousel"
-              data-bs-slide-to="0"
-              className="active"
-              aria-current="true"
-              aria-label="Slide 1"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#productCarousel"
-              data-bs-slide-to="1"
-              aria-label="Slide 2"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#productCarousel"
-              data-bs-slide-to="2"
-              aria-label="Slide 3"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#productCarousel"
-              data-bs-slide-to="3"
-              aria-label="Slide 4"
-            ></button>
+          <div className="carousel-image-container">
+            <img
+              src={item.img}
+              className="d-block w-100"
+              alt={item.alt}
+              loading="lazy"
+            />
           </div>
-          <div className="carousel-inner rounded-3 shadow-lg">
-            <div className="carousel-item active">
-              <div className="carousel-image-container">
-                <img
-                  src={delivery}
-                  className="d-block w-100"
-                  alt="Fast Delivery"
-                />
-              </div>
-              <div className="carousel-caption">
-                <h3 className="bg-success p-2 rounded">Fast Delivery</h3>
-                <p className="text-white bg-dark bg-opacity-75 p-1 rounded">
-                  Get Delivered In No Time
-                </p>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <div className="carousel-image-container">
-                <img
-                  src={mobile}
-                  className="d-block w-100"
-                  alt="Mobile Phones"
-                />
-              </div>
-              <div className="carousel-caption">
-                <h3 className="bg-success p-2 rounded">Summer Sale</h3>
-                <p className="text-white bg-dark bg-opacity-75 p-1 rounded">
-                  Up to 50% off on selected items
-                </p>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <img
-                src={hood}
-                className="d-block w-100"
-                alt="New Arrivals"
-                style={{ height: "500px", objectFit: "cover" }}
-              />
-              <div className="carousel-caption d-none d-md-block">
-                <h3 className="bg-success p-2 rounded">New Arrivals</h3>
-                <p className="text-white bg-dark bg-opacity-75 p-1 rounded">
-                  Be the first to get the hottest products of the season
-                </p>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <img
-                src={service}
-                className="d-block w-100"
-                alt="Customer Service"
-                style={{ height: "500px", objectFit: "cover" }}
-              />
-              <div className="carousel-caption d-none d-md-block">
-                <h3 className="bg-success p-2 rounded">Customer Service</h3>
-                <p className="text-white bg-dark bg-opacity-75 p-1 rounded">
-                  Top-rated products loved by our community
-                </p>
-              </div>
-            </div>
+          <div className="carousel-caption">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
           </div>
-          <button
-            className="carousel-control-prev"
-            type="button"
-            data-bs-target="#productCarousel"
-            data-bs-slide="prev"
-          >
-            <span
-              className="carousel-control-prev-icon bg-dark bg-opacity-50 rounded p-3"
-              aria-hidden="true"
-            ></span>
-            <span className="visually-hidden">Previous</span>
-          </button>
-          <button
-            className="carousel-control-next"
-            type="button"
-            data-bs-target="#productCarousel"
-            data-bs-slide="next"
-          >
-            <span
-              className="carousel-control-next-icon bg-dark bg-opacity-50 rounded p-3"
-              aria-hidden="true"
-            ></span>
-            <span className="visually-hidden">Next</span>
-          </button>
         </div>
-      </section>
+      ))}
+    </div>
+
+    {/* Navigation Controls */}
+    <button
+      className="carousel-control-prev"
+      type="button"
+      data-bs-target="#productCarousel"
+      data-bs-slide="prev"
+    >
+      <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span className="visually-hidden">Previous</span>
+    </button>
+    <button
+      className="carousel-control-next"
+      type="button"
+      data-bs-target="#productCarousel"
+      data-bs-slide="next"
+    >
+      <span className="carousel-control-next-icon" aria-hidden="true"></span>
+      <span className="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
 
       <section className="about-section container mb-5">
         <div className="row align-items-center g-4">

@@ -43,11 +43,10 @@ function App() {
           <Route path="/signup" Component={Signup}></Route>
           <Route path="/signin" Component={Signin}></Route>
           <Route path="/" Component={Home}></Route>
+          <Route path="/cart" Component={Cart}></Route>
           <Route path="/products" Component={Products}></Route>
           <Route path="/payment" Component={Payment}></Route>
-          <Route path="/cart" Component={Cart}></Route>
           <Route path="/Upload" Component={Upload}></Route>
-          
         </Routes>
       </div>
     </Router>
