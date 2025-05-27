@@ -20,13 +20,13 @@ const Carousel = () => {
         >
           <div className="carousel-inner">
             <div className="carousel-item active">
-              <img src={delivery} alt="Home Banner" className="d-block w-100" />
+              <img src={delivery} alt="delivery" className="d-block w-100" />
               <div className="carousel-caption splash-text">
                 <h1 className="display-5 fw-bold splash-heading">
                   Welcome to Click-Crew
                 </h1>
-                <p className="lead">Get the products you love.</p>
-                
+                <p className="lead">Get Delivered Products To Your DoorStep.</p>
+
                 <button
                   onClick={() => navigate("/Products")}
                   className="btn btn-success mt-2 w-100"
@@ -46,8 +46,10 @@ const Carousel = () => {
                 <h1 className="display-5 fw-bold splash-heading">
                   Welcome to Click-Crew
                 </h1>
-                <p className="lead">Get Delivered Products To Your DoorStep.</p>
-                
+                <p className="lead">
+                  Get Products That You'll Need For Summer.
+                </p>
+
                 <button
                   onClick={() => navigate("/Products")}
                   className="btn btn-success mt-2 w-100"
@@ -67,8 +69,8 @@ const Carousel = () => {
                 <h1 className="display-5 fw-bold splash-heading">
                   Welcome to Click-Crew
                 </h1>
-                <p className="lead">Get Products That You'll Need For Summer</p>
-                
+                <p className="lead">Get New Arrivals Updates Once You've Signed Up</p>
+
                 <button
                   onClick={() => navigate("/Products")}
                   className="btn btn-success mt-2 w-100"
@@ -89,7 +91,7 @@ const Carousel = () => {
                   Welcome to Click-Crew
                 </h1>
                 <p className="lead">Services Offered to Every User</p>
-                
+
                 <button
                   onClick={() => navigate("/Products")}
                   className="btn btn-success mt-2 w-100"
@@ -134,7 +136,6 @@ const Carousel = () => {
             <li data-bs-target="#mycarousel" data-bs-slide-to="1"></li>
             <li data-bs-target="#mycarousel" data-bs-slide-to="2"></li>
             <li data-bs-target="#mycarousel" data-bs-slide-to="3"></li>
-           
           </ol>
         </div>
       </div>
