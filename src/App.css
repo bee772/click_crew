@@ -408,3 +408,19 @@
   transform: translateY(-10px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
+
+/* Custom alert position */
+.custom-alert-position {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: 300px;
+}
+
+/* Alert link styling */
+.alert-link {
+  text-decoration: underline;
+  font-weight: bold;
+  color: inherit;
+}

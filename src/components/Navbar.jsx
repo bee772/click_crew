@@ -81,80 +81,64 @@ const Navbar = ({ cartCount }) => {
             <li className="nav-item">
               <Link
                 to="/"
-                className="nav-link"
+                className="nav-link px-3 py-2 rounded mx-1"
                 onClick={() => isMobile && setIsOpen(false)}
+                style={{
+                  transition: "all 0.3s ease",
+                  color: "#f8f9fa",
+                  backgroundColor: "transparent",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor =
+                    "rgba(255, 255, 255, 0.1)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
               >
                 Home
               </Link>
             </li>
+
             <li className="nav-item">
               <Link
                 to="/products"
-                className="nav-link"
+                className="nav-link px-3 py-2 rounded mx-1"
                 onClick={() => isMobile && setIsOpen(false)}
+                style={{
+                  transition: "all 0.3s ease",
+                  color: "#f8f9fa",
+                  backgroundColor: "transparent",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor =
+                    "rgba(255, 255, 255, 0.1)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
               >
                 Buy
               </Link>
             </li>
 
-            {/* ✅ Upload is shown only when user is logged in */}
-            {user && (
-              <li className="nav-item">
-                <Link
-                  to="/Upload"
-                  className="nav-link"
-                  onClick={() => isMobile && setIsOpen(false)}
-                >
-                  Upload Product
-                </Link>
-              </li>
-            )}
-          </ul>
-
-          <ul className="navbar-nav">
-            {!user ? (
-              <>
-                <li className="nav-item">
-                  <Link
-                    to="/Signup"
-                    className="nav-link"
-                    onClick={() => isMobile && setIsOpen(false)}
-                  >
-                    Signup
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    to="/Signin"
-                    className="nav-link"
-                    onClick={() => isMobile && setIsOpen(false)}
-                  >
-                    Signin
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <span className="nav-link text-light">
-                    Welcome, {user[1] || "User"}
-                  </span>
-                </li>
-                <li className="nav-item">
-                  <button
-                    className="nav-link btn btn-link text-light"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </li>
-              </>
-            )}
             <li className="nav-item position-relative">
               <Link
                 to="/cart"
-                className="nav-link"
+                className="nav-link px-3 py-2 rounded mx-1"
                 onClick={() => isMobile && setIsOpen(false)}
+                style={{
+                  transition: "all 0.3s ease",
+                  color: "#f8f9fa",
+                  backgroundColor: "transparent",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor =
+                    "rgba(255, 255, 255, 0.1)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
               >
                 Orders
                 {cartCount > 0 && (
@@ -165,6 +149,112 @@ const Navbar = ({ cartCount }) => {
                 )}
               </Link>
             </li>
+
+            {user && (
+              <li className="nav-item">
+                <Link
+                  to="/Upload"
+                  className="nav-link px-3 py-2 rounded mx-1"
+                  onClick={() => isMobile && setIsOpen(false)}
+                  style={{
+                    transition: "all 0.3s ease",
+                    color: "#f8f9fa",
+                    backgroundColor: "transparent",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(255, 255, 255, 0.1)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                >
+                  Upload Product
+                </Link>
+              </li>
+            )}
+
+            <ul className="navbar-nav">
+              {!user ? (
+                <>
+                  <li className="nav-item">
+                    <Link
+                      to="/Signup"
+                      className="nav-link px-3 py-2 rounded mx-1"
+                      onClick={() => isMobile && setIsOpen(false)}
+                      style={{
+                        transition: "all 0.3s ease",
+                        color: "#f8f9fa",
+                        backgroundColor: "rgba(13, 110, 253, 0.7)",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(67, 95, 97, 0.9)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(4, 83, 57, 0.7)")
+                      }
+                    >
+                      Signup
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      to="/Signin"
+                      className="nav-link px-3 py-2 rounded mx-1"
+                      onClick={() => isMobile && setIsOpen(false)}
+                      style={{
+                        transition: "all 0.3s ease",
+                        color: "#f8f9fa",
+                        backgroundColor: "rgba(108, 117, 125, 0.7)",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(3, 77, 64, 0.9)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(166, 238, 238, 0.7)")
+                      }
+                    >
+                      Sign in
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <span className="nav-link text-light px-3 py-2">
+                      Welcome, {user[1] || "User"}
+                    </span>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link btn px-3 py-2 rounded mx-1"
+                      onClick={handleLogout}
+                      style={{
+                        transition: "all 0.3s ease",
+                        color: "#f8f9fa",
+                        backgroundColor: "rgba(220, 53, 69, 0.7)",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(220, 53, 69, 0.9)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(220, 53, 69, 0.7)")
+                      }
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
+              )}
+            </ul>
           </ul>
         </div>
       </div>

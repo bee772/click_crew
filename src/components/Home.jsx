@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import sonyImage from "../assets/images/sony.jpg";
 import watch from "../assets/images/watch.jpg";
 import earbuds from "../assets/images/earbuds.jpg";
-import delivery from "../assets/images/delivery.jpg";
-import man from "../assets/images/output.jpg";
-import hood from "../assets/images/output (1).jpg";
-import service from "../assets/images/service.jpg";
 import about from "../assets/images/about.jpg";
 import fb from "../assets/images/fb.jpeg";
 import x from "../assets/images/x.jpg";
 import IG from "../assets/images/ig.jpg";
 import Linkedin from "../assets/images/link.jpg";
 import Youtube from "../assets/images/tube.png";
+import Carousel from "./Carousel";
 
 const Home = () => {
   const [comments, setComments] = useState([
@@ -40,23 +36,7 @@ const Home = () => {
   ]);
 
   const [newComment, setNewComment] = useState("");
-  const productCarouselRef = useRef(null);
-  const testimonialCarouselRef = useRef(null);
-
-  useEffect(() => {
-    const productCarousel = new window.bootstrap.Carousel(
-      productCarouselRef.current,
-      { interval: 3000 }
-    );
-    const testimonialCarousel = new window.bootstrap.Carousel(
-      testimonialCarouselRef.current,
-      { interval: 4000 }
-    );
-    return () => {
-      productCarousel.dispose();
-      testimonialCarousel.dispose();
-    };
-  }, []);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,107 +46,31 @@ const Home = () => {
         { text: newComment.trim(), author: "You" },
       ]);
       setNewComment("");
+      // Set the new comment as the active testimonial
+      setActiveTestimonial(comments.length);
     }
+  };
+
+  const handlePrevTestimonial = () => {
+    setActiveTestimonial((prev) =>
+      prev === 0 ? comments.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextTestimonial = () => {
+    setActiveTestimonial((prev) =>
+      prev === comments.length - 1 ? 0 : prev + 1
+    );
   };
 
   return (
     <div className="homepage-container">
       <header className="text-center py-4">
         <h1 className="text-success display-4 fw-bold">CLICK-CREW</h1>
-        <p className="lead">Best Deals on Products You Love!</p>
+        <Carousel />
+        <p className="lead text-dark bg-success">Best Deals on Products You Love!</p>
         <p>Sell products that you've got once you've registered</p>
       </header>
-
-      <section className="carousel-section mb-5">
-  <div
-    id="productCarousel"
-    className="carousel slide"
-    data-bs-ride="carousel"
-    ref={productCarouselRef}
-  >
-    {/* Indicators */}
-    <div className="carousel-indicators">
-      {[0, 1, 2, 3].map((index) => (
-        <button
-          key={index}
-          type="button"
-          data-bs-target="#productCarousel"
-          data-bs-slide-to={index}
-          className={index === 0 ? "active" : ""}
-          aria-label={`Slide ${index + 1}`}
-        />
-      ))}
-    </div>
-
-    {/* Carousel Items */}
-    <div className="carousel-inner">
-      {[
-        { 
-          img: delivery, 
-          title: "Fast Delivery", 
-          text: "Get Delivered In No Time",
-          alt: "Fast delivery service"
-        },
-        { 
-          img: man, 
-          title: "Summer Sale", 
-          text: "Up to 50% off on selected items",
-          alt: "Mobile phones on sale"
-        },
-        { 
-          img: hood, 
-          title: "New Arrivals", 
-          text: "Be the first to get the hottest products",
-          alt: "New fashion arrivals"
-        },
-        { 
-          img: service, 
-          title: "Customer Service", 
-          text: "Top-rated products loved by our community",
-          alt: "Excellent customer service"
-        }
-      ].map((item, index) => (
-        <div 
-          key={index}
-          className={`carousel-item ${index === 0 ? "active" : ""}`}
-        >
-          <div className="carousel-image-container">
-            <img
-              src={item.img}
-              className="d-block w-100"
-              alt={item.alt}
-              loading="lazy"
-            />
-          </div>
-          <div className="carousel-caption">
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    {/* Navigation Controls */}
-    <button
-      className="carousel-control-prev"
-      type="button"
-      data-bs-target="#productCarousel"
-      data-bs-slide="prev"
-    >
-      <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span className="visually-hidden">Previous</span>
-    </button>
-    <button
-      className="carousel-control-next"
-      type="button"
-      data-bs-target="#productCarousel"
-      data-bs-slide="next"
-    >
-      <span className="carousel-control-next-icon" aria-hidden="true"></span>
-      <span className="visually-hidden">Next</span>
-    </button>
-  </div>
-</section>
 
       <section className="about-section container mb-5">
         <div className="row align-items-center g-4">
@@ -252,43 +156,29 @@ const Home = () => {
 
       <section className="testimonials container mb-5">
         <h2 className="text-success text-center mb-4">Customer Testimonials</h2>
-        <div
-          className="carousel slide"
-          id="testimonialCarousel"
-          data-bs-ride="carousel"
-          ref={testimonialCarouselRef}
-        >
-          <div className="carousel-inner">
-            {comments.slice(-5).map((comment, index) => (
-              <div
-                className={`carousel-item ${index === 0 ? "active" : ""}`}
-                key={index}
-              >
-                <div className="d-flex justify-content-center">
-                  <div className="card shadow p-4 w-75 text-center">
-                    <p className="fs-5">"{comment.text}"</p>
-                    <p className="text-muted fw-bold">- {comment.author}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+        <div className="testimonial-container">
+          <div className="d-flex justify-content-center">
+            <div className="card shadow p-4 w-75 text-center">
+              <p className="fs-5">"{comments[activeTestimonial].text}"</p>
+              <p className="text-muted fw-bold">
+                - {comments[activeTestimonial].author}
+              </p>
+            </div>
           </div>
-          <button
-            className="carousel-control-prev"
-            type="button"
-            data-bs-target="#testimonialCarousel"
-            data-bs-slide="prev"
-          >
-            <span className="carousel-control-prev-icon"></span>
-          </button>
-          <button
-            className="carousel-control-next"
-            type="button"
-            data-bs-target="#testimonialCarousel"
-            data-bs-slide="next"
-          >
-            <span className="carousel-control-next-icon"></span>
-          </button>
+          <div className="d-flex justify-content-center mt-3">
+            <button
+              className="btn btn-outline-success me-2"
+              onClick={handlePrevTestimonial}
+            >
+              Previous
+            </button>
+            <button
+              className="btn btn-outline-success"
+              onClick={handleNextTestimonial}
+            >
+              Next
+            </button>
+          </div>
         </div>
 
         <div className="row justify-content-center mt-4">
@@ -337,12 +227,8 @@ const Home = () => {
             </div>
             <div className="col-md-6">
               <div className="d-flex flex-column align-items-start">
-                {" "}
-                {/* Changed to align items to start (left) */}
                 <h4>Connect With Us</h4>
                 <div className="d-flex gap-3 mb-3">
-                  {" "}
-                  {/* Social icons container */}
                   <img
                     src={fb}
                     alt="Facebook"
@@ -375,8 +261,6 @@ const Home = () => {
                   />
                 </div>
                 <div className="contact-info text-start">
-                  {" "}
-                  {/* Added text-start for alignment */}
                   <p>
                     <i className="bi bi-envelope me-2"></i> info@click-crew.com
                   </p>

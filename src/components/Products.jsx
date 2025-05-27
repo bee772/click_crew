@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.js";
 import "../App.css";
+import bootstrap from "bootstrap/dist/js/bootstrap.js";
 import { Button, Card } from "react-bootstrap";
 
 const Products = ({ addToCart: propAddToCart }) => {
@@ -67,7 +68,30 @@ const addToCart = (product) => {
   // 🔔 Notify other components that cart was updated
   window.dispatchEvent(new Event("cartUpdated"));
 
-  alert(`Added "${product.product_name}" to cart.`);
+  // Create a custom alert with a link to orders
+  const alertMessage = document.createElement("div");
+  alertMessage.innerHTML = `
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      Added "${product.product_name}" to cart. 
+      <a href="/Cart" class="alert-link">View your orders</a>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  // Position the alert
+  alertMessage.style.position = "fixed";
+  alertMessage.style.top = "20px";
+  alertMessage.style.right = "20px";
+  alertMessage.style.zIndex = "9999";
+  alertMessage.style.width = "300px";
+
+  document.body.appendChild(alertMessage);
+
+  // Auto-dismiss after 5 seconds
+  setTimeout(() => {
+    const bsAlert = new bootstrap.Alert(alertMessage.querySelector(".alert"));
+    bsAlert.close();
+  }, 5000);
 };
   if (isLoading) {
     return (
