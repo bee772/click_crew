@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import logo from "../assets/images/logo.png";
 import sonyImage from "../assets/images/sony.jpg";
 import watch from "../assets/images/watch.jpg";
 import earbuds from "../assets/images/earbuds.jpg";
@@ -66,10 +67,40 @@ const Home = () => {
   return (
     <div className="homepage-container">
       <header className="text-center py-4">
-        <h1 className="text-success display-4 fw-bold">CLICK-CREW</h1>
+        <h1 className="text-success display-4 fw-bold d-flex align-items-center">
+          <img
+            src={logo}
+            alt="Affiliate Logo"
+            style={{ height: "1.2em", marginRight: "0.5em" }}
+          />
+          CLICK-CREW
+        </h1>
+        <p
+          className="lead p-3 rounded text-white mb-4"
+          style={{
+            background: "linear-gradient(135deg,rgb(1, 14, 3), #20c997)",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          }}
+        >
+          Best Deals on Products You Love!
+        </p>
         <Carousel />
-        <p className="lead text-dark bg-success">Best Deals on Products You Love!</p>
-        <p>Sell products that you've got once you've registered</p>
+        <div
+          className="position-relative mb-4 p-3 rounded"
+          style={{
+            backgroundColor: "#f8f9fa",
+          }}
+        >
+          <div
+            className="position-absolute top-0 start-0 h-100 bg-primary"
+            style={{
+              width: "3px",
+            }}
+          ></div>
+          <p className="mb-0 ps-3">
+            <strong>Note:</strong> Once registered, you can sell your products.
+          </p>
+        </div>
       </header>
 
       <section className="about-section container mb-5">
