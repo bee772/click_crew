@@ -11,6 +11,7 @@ import Upload from "./components/Upload";
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Carousel from "./components/Carousel";
+import Delivery from "./components/Delivery";
 function App() {
   const [cartCount, setCartCount] = useState(0);
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/payment" Component={Payment}></Route>
           <Route path="/Upload" Component={Upload}></Route>
           <Route path="/carousel" Component={Carousel}></Route>
+          <Route path="/delivery" Component={Delivery}></Route>
         </Routes>
       </div>
     </Router>

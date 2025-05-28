@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Payments = () => {
   const location = useLocation();
-  const { product, cartItems, totalCost, isCartCheckout } =
+  const { product, cartItems, totalCost, isCartCheckout, deliveryInfo } =
     location.state || {};
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
@@ -30,6 +30,14 @@ const Payments = () => {
       data.append("phone", phone);
       data.append("amount", isCartCheckout ? totalCost : product.product_cost);
 
+      // Add delivery info if it exists
+      if (deliveryInfo) {
+        data.append("delivery_address", deliveryInfo.address);
+        data.append("delivery_city", deliveryInfo.city);
+        data.append("delivery_county", deliveryInfo.county);
+        data.append("delivery_notes", deliveryInfo.additionalNotes || "");
+      }
+
       const response = await axios.post(
         "https://Mwangi10.pythonanywhere.com/api/mpesa_payment",
         data
@@ -42,6 +50,20 @@ const Payments = () => {
         localStorage.removeItem("cart");
         window.dispatchEvent(new Event("cartUpdated"));
       }
+
+      // Redirect to success page after 3 seconds
+      setTimeout(() => {
+        navigate("/payment-success", {
+          state: {
+            product,
+            cartItems,
+            totalCost,
+            isCartCheckout,
+            deliveryInfo,
+            phone,
+          },
+        });
+      }, 3000);
     } catch (error) {
       setMessage(
         error.response?.data?.message || "Payment failed. Please try again."
@@ -118,7 +140,7 @@ const Payments = () => {
                         </div>
                       ))}
                     </div>
-                    <h4 className="text-primary mt-3">
+                    <h4 className="text-light mt-3">
                       Total: KSH {parseFloat(totalCost).toFixed(2)}
                     </h4>
                   </>
@@ -138,10 +160,29 @@ const Payments = () => {
                       }}
                     />
                     <h5 className="mt-2">{product.product_name}</h5>
-                    <h4 className="text-success">
+                    <h4 className="text-light">
                       KSH {parseFloat(product.product_cost).toFixed(2)}
                     </h4>
                   </>
+                )}
+
+                {deliveryInfo && (
+                  <div className="mt-4 text-start">
+                    <h5>Delivery Information</h5>
+                    <p>
+                      <strong>Address:</strong> {deliveryInfo.address}
+                      <br />
+                      <strong>City:</strong> {deliveryInfo.city}
+                      <br />
+                      <strong>County:</strong> {deliveryInfo.county}
+                      <br />
+                      {deliveryInfo.additionalNotes && (
+                        <>
+                          <strong>Notes:</strong> {deliveryInfo.additionalNotes}
+                        </>
+                      )}
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -179,9 +220,16 @@ const Payments = () => {
                       Processing...
                     </>
                   ) : (
-                    "Purchase Now"
+                    "Complete Payment"
                   )}
                 </button>
+
+                {deliveryInfo && (
+                  <p className="text-light small mt-2">
+                    Delivery fee will be calculated and added to your total
+                    after payment confirmation.
+                  </p>
+                )}
               </div>
             </div>
           </form>

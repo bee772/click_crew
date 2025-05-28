@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.js";
 import "../App.css";
 import bootstrap from "bootstrap/dist/js/bootstrap.js";
-import { Button } from "react-bootstrap"; // Added back the Button import
+import { Button } from "react-bootstrap";
 
 const Products = ({ addToCart: propAddToCart }) => {
   const [products, setProducts] = useState([]);
@@ -15,6 +15,10 @@ const Products = ({ addToCart: propAddToCart }) => {
 
   const img_url = "https://Mwangi10.pythonanywhere.com/static/images/";
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   const getProducts = async () => {
     try {
@@ -30,10 +34,6 @@ const Products = ({ addToCart: propAddToCart }) => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    getProducts();
-  }, []);
 
   const handleAddToCart = (product) => {
     if (!product.product_id) {
@@ -119,7 +119,7 @@ const Products = ({ addToCart: propAddToCart }) => {
       </div>
 
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3>Products Available</h3>
+        <h3 className="mb-0">Products Available</h3>
         <div style={{ width: "300px" }}>
           <input
             type="text"
@@ -142,13 +142,12 @@ const Products = ({ addToCart: propAddToCart }) => {
           {filteredProducts.map((product) => (
             <div className="col" key={product.product_id}>
               <div
-                className="card"
+                className="card h-100"
                 style={{
                   border: "none",
                   borderRadius: "10px",
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   transition: "transform 0.3s",
-                  height: "100%",
                 }}
               >
                 <div
@@ -171,6 +170,9 @@ const Products = ({ addToCart: propAddToCart }) => {
                       maxWidth: "100%",
                       objectFit: "contain",
                     }}
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/200";
+                    }}
                   />
                 </div>
                 <div className="card-body d-flex flex-column">
@@ -186,7 +188,7 @@ const Products = ({ addToCart: propAddToCart }) => {
                     {product.product_description}
                   </div>
                   <div className="mt-auto">
-                    <div className="action d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
                       <div className="price">
                         <span style={{ fontWeight: "bold", color: "#28a745" }}>
                           KSH {parseFloat(product.product_cost).toFixed(2)}
@@ -227,15 +229,26 @@ const Products = ({ addToCart: propAddToCart }) => {
                         <span>Add to cart</span>
                       </button>
                     </div>
-                    <Button
-                      variant="success"
-                      className="w-100 mt-2"
-                      onClick={() =>
-                        navigate("/Payment", { state: { product } })
-                      }
-                    >
-                      Buy Now
-                    </Button>
+                    <div className="d-flex gap-2">
+                      <Button
+                        variant="success"
+                        className="flex-grow-1"
+                        onClick={() =>
+                          navigate("/Payment", { state: { product } })
+                        }
+                      >
+                        Buy Now
+                      </Button>
+                      <Button
+                        variant="outline-primary"
+                        className="flex-grow-1"
+                        onClick={() =>
+                          navigate("/Delivery", { state: { product } })
+                        }
+                      >
+                        Get Delivery
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
