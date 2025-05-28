@@ -1,6 +1,6 @@
 /* Carousel Caption */
 .carousel-caption {
-    background: rgba(0, 0, 0, 0.6); /* Slightly darker background for better readability */
+    background: rgba(5, 5, 5, 0.6); /* Slightly darker background for better readability */
     padding: 15px; /* Add more padding for spacing */
     border-radius: 10px; /* Rounded corners */
     max-width: 350px; /* Slightly wider caption */
@@ -33,8 +33,8 @@
 
 /* Caption Button */
 .carousel-caption .btn {
-    background-color: #007bff; /* Primary blue color */
-    color: #fff;
+    background-color: #001a17; /* Primary blue color */
+    color: #f4f8f6;
     padding: 10px 20px; /* Adjust button size */
     font-size: 1rem; /* Adjust font size */
     border: none;
@@ -47,8 +47,9 @@
 
 /* Button Hover Effect */
 .carousel-caption .btn:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    color: #fff;
+    background-color: #befaf5; /* Darker blue on hover */
+    color: #056641;
     transform: scale(1.05); /* Slight zoom effect */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
+

@@ -76,7 +76,7 @@ const Home = () => {
           CLICK-CREW
         </h1>
         <p
-          className="lead p-3 rounded text-white mb-4"
+          className="lead p-3 rounded text-white mb-4 "
           style={{
             background: "linear-gradient(135deg,rgb(1, 14, 3), #20c997)",
             boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
