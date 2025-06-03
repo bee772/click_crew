@@ -6,27 +6,18 @@ import "bootstrap/dist/js/bootstrap.js";
 import "../App.css";
 import bootstrap from "bootstrap/dist/js/bootstrap.js";
 import { Button } from "react-bootstrap";
-import { Modal } from "react-bootstrap";
 
 const Products = ({ addToCart: propAddToCart }) => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [actionType, setActionType] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const navigate = useNavigate();
 
   const img_url = "https://Mwangi10.pythonanywhere.com/static/images/";
+  const navigate = useNavigate();
 
   useEffect(() => {
     getProducts();
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
   }, []);
 
   const getProducts = async () => {
@@ -44,49 +35,7 @@ const Products = ({ addToCart: propAddToCart }) => {
     }
   };
 
-  const handleActionClick = (product, action) => {
-    if (!user) {
-      setSelectedProduct(product);
-      setActionType(action);
-      setShowLoginModal(true);
-      return;
-    }
-
-    switch (action) {
-      case "addToCart":
-        addToCart(product);
-        break;
-      case "buyNow":
-        navigate("/Payment", { state: { product } });
-        break;
-      case "getDelivery":
-        navigate("/Delivery", { state: { product } });
-        break;
-      default:
-        break;
-    }
-  };
-
-  const proceedToLogin = () => {
-    localStorage.setItem("redirectAfterLogin", window.location.pathname);
-    setShowLoginModal(false);
-    navigate("/Signin");
-  };
-
-  const getActionMessage = () => {
-    switch (actionType) {
-      case "addToCart":
-        return "add this item to your cart";
-      case "buyNow":
-        return "purchase this item";
-      case "getDelivery":
-        return "arrange delivery for this item";
-      default:
-        return "perform this action";
-    }
-  };
-
-  const addToCart = (product) => {
+  const handleAddToCart = (product) => {
     if (!product.product_id) {
       console.error("Product is missing ID:", product);
       return;
@@ -100,8 +49,16 @@ const Products = ({ addToCart: propAddToCart }) => {
       product_photo: product.product_photo,
     };
 
+    addToCart(cartItem);
+  };
+
+  const filteredProducts = products.filter((product) =>
+    product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const addToCart = (product) => {
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    existingCart.push(cartItem);
+    existingCart.push(product);
     localStorage.setItem("cart", JSON.stringify(existingCart));
     window.dispatchEvent(new Event("cartUpdated"));
 
@@ -128,10 +85,6 @@ const Products = ({ addToCart: propAddToCart }) => {
     }, 5000);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   if (isLoading) {
     return (
       <div className="container text-center mt-5">
@@ -153,31 +106,6 @@ const Products = ({ addToCart: propAddToCart }) => {
 
   return (
     <div className="container-fluid">
-      {/* Login Modal */}
-      <Modal
-        show={showLoginModal}
-        onHide={() => setShowLoginModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Login Required</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>You need to login to {getActionMessage()}.</p>
-          <p>
-            Item: <strong>{selectedProduct?.product_name}</strong>
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowLoginModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="success" onClick={proceedToLogin}>
-            Go to Login
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
       <div className="alert alert-info mb-4">
         <div className="d-flex justify-content-between align-items-center">
           <div>
@@ -268,7 +196,7 @@ const Products = ({ addToCart: propAddToCart }) => {
                       </div>
                       <button
                         className="cart-button btn btn-sm"
-                        onClick={() => handleActionClick(product, "addToCart")}
+                        onClick={() => handleAddToCart(product)}
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -305,7 +233,9 @@ const Products = ({ addToCart: propAddToCart }) => {
                       <Button
                         variant="success"
                         className="flex-grow-1"
-                        onClick={() => handleActionClick(product, "buyNow")}
+                        onClick={() =>
+                          navigate("/Payment", { state: { product } })
+                        }
                       >
                         Buy Now
                       </Button>
@@ -313,7 +243,7 @@ const Products = ({ addToCart: propAddToCart }) => {
                         variant="outline-primary"
                         className="flex-grow-1"
                         onClick={() =>
-                          handleActionClick(product, "getDelivery")
+                          navigate("/Delivery", { state: { product } })
                         }
                       >
                         Get Delivery
