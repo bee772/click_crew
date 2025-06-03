@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Signin.css";
 
@@ -9,6 +9,7 @@ const Signin = () => {
   const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
@@ -37,8 +38,10 @@ const Signin = () => {
           localStorage.setItem("token", response.data.token);
         }
 
-        // ✅ Reload the app to reflect login in Navbar
-        window.location.href = "/";
+        // Redirect to previous page or home
+        const redirectTo = localStorage.getItem("redirectAfterLogin") || "/";
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectTo);
       } else {
         setError(response.data.Message || "Login Failed");
       }

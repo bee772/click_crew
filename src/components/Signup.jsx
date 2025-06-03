@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Signup = () => {
@@ -10,6 +10,7 @@ const Signup = () => {
   const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
@@ -27,14 +28,15 @@ const Signup = () => {
       );
       setLoading("");
       setSuccess(response.data.Success);
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setPhone("");
+
+      // Redirect to login after successful signup
+      setTimeout(() => {
+        navigate("/Signin");
+      }, 2000);
     } catch (error) {
       setSuccess("");
       setLoading("");
-      setError("Oops something went wrong!!");
+      setError(error.response?.data?.Message || "Oops something went wrong!!");
     }
   };
 
@@ -44,7 +46,6 @@ const Signup = () => {
         <form className="form" onSubmit={submit}>
           <p id="heading">Sign Up</p>
 
-          {/* Username Field */}
           <div className="field">
             <svg
               viewBox="0 0 16 16"
@@ -66,7 +67,6 @@ const Signup = () => {
             />
           </div>
 
-          {/* Email Field */}
           <div className="field">
             <svg
               viewBox="0 0 16 16"
@@ -88,7 +88,6 @@ const Signup = () => {
             />
           </div>
 
-          {/* Password Field */}
           <div className="field">
             <svg
               viewBox="0 0 16 16"
@@ -110,7 +109,6 @@ const Signup = () => {
             />
           </div>
 
-          {/* Phone Field */}
           <div className="field">
             <svg
               viewBox="0 0 16 16"
@@ -133,9 +131,8 @@ const Signup = () => {
           </div>
 
           <div className="btn">
-            <button className="button1" type="submit">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sign
-              Up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button className="button1" type="submit" disabled={loading}>
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
             <Link to="/Signin" className="button2">
               Sign In
